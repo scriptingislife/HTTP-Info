@@ -1,2 +1,2 @@
 # HTTP-Info
-Homemade urlscan.io
+Homebrewed urlscan.io in a docker container.
