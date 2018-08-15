@@ -12,7 +12,7 @@ from selenium.webdriver.chrome.options import Options
 import puush
 import os
 
-ACCOUNT = puush.Account("3BF5BF92BC493F6AC7713D2F92869C53")
+ACCOUNT = puush.Account(os.environ['HTTPINFO_PUUSHAPI'])
 DRIVER = 'chromedriver'
 WINDOW_SIZE = "1920,1080"
 
