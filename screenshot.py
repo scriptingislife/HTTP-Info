@@ -18,6 +18,8 @@ ACCOUNT = puush.Account(os.environ['HTTPINFO_PUUSHAPI'])
 DRIVER = 'chromedriver'
 WINDOW_SIZE = "1920,1080"
 
+print('Setting up Selenium environment.')
+
 # Create proxy
 server = Server(os.environ['HTTPINFO_BMP_PATH'])
 server.start()
@@ -46,9 +48,12 @@ URL = str(os.environ['HTTPINFO_URL'])
 OUT = "http-info.png"
 
 # Launch Selenium
+print('GET {}'.format(URL))
 driver.get(URL)
+print('Saving screenshot.')
 screenshot = driver.save_screenshot(OUT)
 
+print('Uploading screenshot.')
 upload = ACCOUNT.upload(OUT)
 print(upload.url)
 
@@ -57,5 +62,13 @@ server.stop()
 
 driver.quit()
 
-pp = pprint.PrettyPrinter(indent=2)
-pp.pprint(network_traffic)
+ntw_string = """
+    Request URL: {}
+    Request Method: {}
+    Response Status: {}
+    Reponse Size: {}
+    Content Type: {}
+"""
+
+for entry in network_traffic['log']['entries']:
+    entry_string = ntw_string.format(entry['request']['url'], entry['request']['method'], entry['response']['status'], entry['response']['bodySize'], entry['response']['content']['mimeType'])
