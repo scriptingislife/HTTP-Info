@@ -10,12 +10,11 @@ RUN apt install default-jre unzip -y
 RUN mkdir /usr/http-info
 WORKDIR /usr/http-info
 
-COPY screenshot.py /usr/http-info
+COPY getinfo.py /usr/http-info
 
 RUN wget https://github.com/lightbody/browsermob-proxy/releases/download/browsermob-proxy-2.1.4/browsermob-proxy-2.1.4-bin.zip
 RUN unzip browsermob-proxy-2.1.4-bin.zip
 
 ENV HTTPINFO_BMP_PATH "./browsermob-proxy-2.1.4/bin/browsermob-proxy"
-ENV HTTPINFO_PUUSHAPI "[redacted]"
 
-ENTRYPOINT python screenshot.py
+ENTRYPOINT python getinfo.py
