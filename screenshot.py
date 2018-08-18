@@ -72,3 +72,4 @@ ntw_string = """
 
 for entry in network_traffic['log']['entries']:
     entry_string = ntw_string.format(entry['request']['url'], entry['request']['method'], entry['response']['status'], entry['response']['bodySize'], entry['response']['content']['mimeType'])
+    print(entry_string)
