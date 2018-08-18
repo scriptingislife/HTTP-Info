@@ -18,14 +18,18 @@ import os
 
 
 def main():
-    ACCOUNT = puush.Account(os.environ['HTTPINFO_PUUSHAPI'])
+    PUUSH_API = os.getenv('HTTPINFO_PUUSHAPI')
+    if PUUSH_API:
+        ACCOUNT = puush.Account(PUUSH_API)
+    else:
+        ACCOUNT = None
     DRIVER = 'chromedriver'
     WINDOW_SIZE = "1920,1080"
 
     print('Setting up Selenium environment.')
 
     # Create proxy
-    server = Server(os.environ['HTTPINFO_BMP_PATH'])
+    server = Server(os.getenv('HTTPINFO_BMP_PATH'))
     server.start()
     proxy = server.create_proxy()
 
@@ -49,7 +53,7 @@ def main():
 
     # Specify URL
     try:
-        URL = str(os.environ['HTTPINFO_URL'])
+        URL = os.getenv('HTTPINFO_URL')
     except KeyError:
         return 1
     OUT = "http-info.png"
@@ -58,11 +62,17 @@ def main():
     print('GET {}'.format(URL))
     driver.get(URL)
     print('Saving screenshot.')
-    screenshot = driver.save_screenshot(OUT)
+    try:
+        screenshot = driver.save_screenshot(OUT)
+    except:
+        print("Failed to grab screenshot.")
+        screenshot = None
 
-    print('Uploading screenshot.')
-    upload = ACCOUNT.upload(OUT)
-    print(upload.url)
+    if screenshot:
+        print('Uploading screenshot.')
+        if ACCOUNT is not None:
+            upload = ACCOUNT.upload(OUT)
+            print(upload.url)
 
     # JSON blob of HTTP requests
     network_traffic = proxy.har
