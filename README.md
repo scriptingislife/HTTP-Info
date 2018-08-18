@@ -3,6 +3,12 @@ Homebrewed urlscan.io in a docker container.
 
 # Try It Out
 
+### Prerequisites
+
+* Install Docker
+* Be able to execute `docker` as the current user [Linux Guide](https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user)
+* Have a [puush.me](https://puush.me/) account
+
 ### Download the code
 `git clone https://github.com/becksteadn/HTTP-Info.git && cd HTTP-Info`
 
