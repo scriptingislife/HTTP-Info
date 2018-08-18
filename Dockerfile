@@ -17,5 +17,5 @@ RUN unzip browsermob-proxy-2.1.4-bin.zip
 
 ENV HTTPINFO_BMP_PATH "./browsermob-proxy-2.1.4/bin/browsermob-proxy"
 ENV HTTPINFO_PUUSHAPI "[redacted]"
-ENV HTTPINFO_URL "https://google.com"
-RUN python screenshot.py
+
+ENTRYPOINT python screenshot.py
