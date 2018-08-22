@@ -1,5 +1,5 @@
 # HTTP-Info
-Homebrewed urlscan.io in a docker container.
+Homebrewed urlscan.io in a docker container. Screenshot a website and log web requests.
 
 # Try It Out
 
