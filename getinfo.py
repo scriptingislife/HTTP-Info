@@ -73,6 +73,8 @@ def main():
         if ACCOUNT is not None:
             upload = ACCOUNT.upload(OUT)
             print(upload.url)
+        else:
+            print('Error uploading screenshot.')
 
     # JSON blob of HTTP requests
     network_traffic = proxy.har
