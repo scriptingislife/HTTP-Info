@@ -20,9 +20,9 @@ Homebrewed urlscan.io in a docker container. Screenshot a website and log web re
 `export HTTPINFO_PUUSHAPI="<API Key>"`
 
 ### Build the container
-`docker build .`
+`docker build -t http-info .`
 
 ### Run the container
 Some pages will crash without a shared `/dev/shm`. 
 
-`docker run -v /dev/shm:/dev/shm -e HTTPINFO_PUUSHAPI -e HTTPINFO_URL="https://scriptingis.life" <image-id>`
+`docker run -v /dev/shm:/dev/shm -e HTTPINFO_PUUSHAPI -e HTTPINFO_URL="https://scriptingis.life" http-info`
