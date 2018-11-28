@@ -23,3 +23,5 @@ Homebrewed urlscan.io in a docker container. Screenshot a website and log web re
 Some pages will crash without a shared `/dev/shm`. 
 
 `docker run -v /dev/shm:/dev/shm -v "$(pwd)":/info http-info https://scriptingis.life`
+
+Output files are `screenshot.png` and `http-info.csv`.
