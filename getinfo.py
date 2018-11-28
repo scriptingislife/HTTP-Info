@@ -3,7 +3,7 @@
 #
 # Use Selenium and BrowserMob Proxy to get information about a URL.
 # - Logs HTTP requests
-# - Uploads a screenshot to puush.me
+# - Takes a screenshot
 #
 # Author: Nathaniel Beckstead <scriptingis.life>
 #
@@ -13,16 +13,31 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from browsermobproxy import Server
-import puush
+import argparse
+import hashlib
+import requests
 import os
 
 
-def main():
-    PUUSH_API = os.getenv('HTTPINFO_PUUSHAPI')
-    if PUUSH_API:
-        ACCOUNT = puush.Account(PUUSH_API)
+def request_hash(url):
+    sha256 = hashlib.sha256()
+    resp = requests.get(url)
+    if resp.status_code == 200:
+        sha256.update(resp.content)
+        return sha256.hexdigest()
     else:
-        ACCOUNT = None
+        return "None"
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("url", help="The URL to retrieve.")
+    args = parser.parse_args()
+
+    URL = args.url    
+    IMG_OUT = "info/screenshot.png"
+    CSV_OUT = "info/http-info.csv"
+
+
     DRIVER = 'chromedriver'
     WINDOW_SIZE = "1920,1080"
 
@@ -51,30 +66,15 @@ def main():
     proxy.new_har('http-info')
     driver = webdriver.Chrome(DRIVER, chrome_options=chrome_options, desired_capabilities=chrome_capabilities)
 
-    # Specify URL
-    try:
-        URL = os.getenv('HTTPINFO_URL')
-    except KeyError:
-        return 1
-    OUT = "http-info.png"
-
     # Launch Selenium
     print('GET {}'.format(URL))
     driver.get(URL)
     print('Saving screenshot.')
     try:
-        screenshot = driver.save_screenshot(OUT)
+        screenshot = driver.save_screenshot(IMG_OUT)
     except:
         print("Failed to grab screenshot.")
         screenshot = None
-
-    if screenshot:
-        print('Uploading screenshot.')
-        if ACCOUNT is not None:
-            upload = ACCOUNT.upload(OUT)
-            print(upload.url)
-        else:
-            print('Error uploading screenshot.')
 
     # JSON blob of HTTP requests
     network_traffic = proxy.har
@@ -88,11 +88,28 @@ def main():
         Response Status: {}
         Reponse Size: {}
         Content Type: {}
+        SHA256 Sum: {}
     """
 
-    for entry in network_traffic['log']['entries']:
-        entry_string = ntw_string.format(entry['request']['url'], entry['request']['method'], entry['response']['status'], entry['response']['bodySize'], entry['response']['content']['mimeType'])
-        print(entry_string)
+    csv_string = "Request URL, Request Method, Response Status, Response Size, Content Type, SHA256 Sum\n"
+    with open(CSV_OUT, 'w') as f:
+        f.write(csv_string)
+        for entry in network_traffic['log']['entries']:
+            entry_hash = request_hash(entry['request']['url'])
+            csv_row = ",".join([entry['request']['url'],
+                                entry['request']['method'],
+                                str(entry['response']['status']),
+                                str(entry['response']['bodySize']),
+                                entry['response']['content']['mimeType'],
+                                entry_hash])
+            f.write(csv_row + '\n')
+            entry_string = ntw_string.format(entry['request']['url'],
+                                            entry['request']['method'],
+                                            entry['response']['status'], 
+                                            entry['response']['bodySize'], 
+                                            entry['response']['content']['mimeType'], 
+                                            entry_hash)
+            print(entry_string)
 
 
 if __name__ == '__main__':
